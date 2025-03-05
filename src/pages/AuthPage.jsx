@@ -12,32 +12,36 @@ const AuthPage = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [authToken, setAuthToken] = useLocalStorage("authToken", "");
 
+    const url = "https://601ab995-8390-45cd-a054-4b77fa95b3f0-00-1fe784zceo76g.sisko.replit.dev";
+
     const navigate = useNavigate();
     const disableSignup = () => setSignupMode(false);
     const enableSignup = () => setSignupMode(true);
 
-    // useEffect(() => {
-    //     if (authToken) navigate("/ProfilePage");
-    // }, [authToken, navigate]);
+    useEffect(() => {
+        if (authToken) 
+            navigate("/profile");
+    }, [authToken, navigate]);
 
-    const handleVerification = ({ password, username }) => {
+    const handleVerification = (password, username) => {
         if (!username.trim().length || !password.trim().length) 
-            return;
-
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (emailPattern.text(emailPattern)) 
-            return;
+            return false;
 
         if (password !== confirmPassword)
-            return;
+            return false;
+
+        return true;
     };
 
     const handleRegistraction = async (e) => {
         e.preventDefault();
 
+        if (!handleVerification(password, username))
+            return console.log("Error");
+
         try {
             const res = signupMode
-                ? await axios.post(`${url}/auth/signup`, { username, password })
+                ? await axios.post(`${url}/auth/signup`, { username, password})
                 : await axios.post(`${url}/auth/login`, { username, password });
 
             if (
@@ -66,7 +70,7 @@ const AuthPage = () => {
                     <Form.Label>Username</Form.Label>
                     <Form.Control
                         type="text"
-                        placeholder="Enter email"
+                        placeholder="Enter your username"
                         onChange={(e) => setUsername(e.target.value)}
                     />
                 </Form.Group>
@@ -92,7 +96,7 @@ const AuthPage = () => {
                 }
 
                 <Button type="submit">
-                    {signupMode ? "Login" : "Sign up"}
+                    {signupMode ? "Sign up" : "Login"}
                 </Button>
             </Form>
 

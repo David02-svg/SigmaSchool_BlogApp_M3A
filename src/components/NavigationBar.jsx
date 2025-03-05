@@ -1,34 +1,35 @@
-import React, { useState } from "react";
+import React from "react";
 
-import IconButton from "./IconButton";
-import BlogModal from "./BlogModal";
+import { Link, useNavigate, useLocation, Outlet } from 'react-router-dom';
+import { Button, Container, Navbar, Nav } from "react-bootstrap";
 
-const ProfileSideBar = ({ handleLogout }) => {
-  const [show, setShow] = useState(false);
+import useLocalStorage from "use-local-storage";
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+const NavigationBar = () => {
+    const [authToken, setAuthToken] = useLocalStorage("authToken", "");
+    const navigate = useNavigate();
+    const location = useLocation();
 
-  return(
-    <>
-        <div
-            className=""
-            style={{ position: "sticky", top: 0 }}
-        >
-            <IconButton className="bi bi-twitter" isTop/>
-            <IconButton
-                className="bi bi-door-closed"
-                text="Logout"
-                onClick={handleLogout}
-            />
-            <button className="rounded" onClick={handleShow}>
-                Upload Blog
-            </button>
-
-            <BlogModal show={show} handleClose={handleClose} />
-        </div>
-    </>
-  );
+    const handleLogout = () => {
+        setAuthToken("");
+        navigate("/login");
+    };
+    
+    return(
+        < >
+            <Navbar bg="dark" data-bs-theme="dark">
+                <Container>
+                    <Navbar.Brand as={Link} to="/home">Home</Navbar.Brand>
+                    <Nav>
+                        {authToken && <Nav.Link as={Link} to="/profile">Profile</Nav.Link>}
+                        {!(location.pathname === "/login" || authToken) && (<Nav.Link as={Link} to="/login">Register</Nav.Link>)}
+                        {authToken && <Button className="ms-2" onClick={handleLogout}>Logout</Button>}
+                    </Nav>
+                </Container>
+            </Navbar>
+            <Outlet/>
+        </>
+    );
 }
 
-export default ProfileSideBar;
+export default NavigationBar;

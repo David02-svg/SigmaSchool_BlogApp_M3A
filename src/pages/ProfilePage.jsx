@@ -1,28 +1,45 @@
 import { useDispatch, useSelector } from "react-redux";
+import { fetchPostsByUser} from "../features/postsSlice";
+import { useNavigate } from "react-router-dom";
 
+import React, { useState, useEffect } from "react";
+import useLocalStorage from "use-local-storage";
+import { jwtDecode } from "jwt-decode";
+
+import { Row,Col, Button } from "react-bootstrap";
+
+import FormModal from "../components/FormModal";
 import BlogGrid from "../components/BlogGrid";
 
 const ProfilePage = () => {
-    const posts = useSelector((store) => store.posts);
+    const [authToken, setAuthToken] = useLocalStorage("authToken", "");
+    const posts = useSelector((store) => store.posts.posts);
+    
+    const [show, setShow] = useState(false);
+    const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    //Fetch based on User
+    useEffect(() => {
+        if (!authToken) {
+            navigate("/login");
+        }
+    }, [authToken, navigate])
+    
     useEffect(() => {
         const token = localStorage.getItem("authToken");
-        if (token) {
-            const decodedToken = jwtDecode(token);
-            const userId = decodedToken.id;
-            dispatch(fetchPostsByUser(userId));
-        }
+        if (token)
+            dispatch(fetchPostsByUser());
+        
     }, [dispatch])
 
-    return (
+    return(
         < >
-            <section>
-                <h1>Author</h1>
-                <p>Content</p>
-            </section>
-            <BlogGrid blogs={posts}/>
+            <Button style={{padding: '1em'}} onClick={() => {setShow(true)}}>Create Post</Button>
+            {posts.length > 0 && <BlogGrid blogs={posts} editMode={true}/>}
+            <FormModal 
+                show={show}
+                onHide={() => setShow(false)}
+            />   
         </>
     )
 }
