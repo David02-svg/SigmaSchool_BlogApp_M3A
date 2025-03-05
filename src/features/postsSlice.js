@@ -2,7 +2,9 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 
-const BASE_URL = "https://601ab995-8390-45cd-a054-4b77fa95b3f0-00-1fe784zceo76g.sisko.replit.dev";
+const BASE_URL = "https://sigma-blog-api.vercel.app";
+    
+    // "https://601ab995-8390-45cd-a054-4b77fa95b3f0-00-1fe784zceo76g.sisko.replit.dev";
 
 //Read all posts
 export const fetchAllPosts = createAsyncThunk(
@@ -68,7 +70,7 @@ export const updatePost = createAsyncThunk(
             thumbnail: postThumbnail,
         }
 
-        const response = await axios.put(`${BASE_URL}/posts/${blogID}`, {
+        const response = await axios.put(`${BASE_URL}/posts/${blogID}`, data, {
             headers: { authorization: `Bearer ${token}` }
         });
         return response.data;
@@ -118,12 +120,8 @@ const postsSlice = createSlice({
                 })
         })
         builder.addCase(deletePost.fulfilled, (state, action) => {
-            console.log("delete post", action.payload);
-            
             if (action.payload.deletedPost)
                 state.posts = state.posts.filter((post) => post.id !== action.payload.deletedPost?.id);
-
-            console.log("Blog Post: ", state.posts);
         })
     }
 });

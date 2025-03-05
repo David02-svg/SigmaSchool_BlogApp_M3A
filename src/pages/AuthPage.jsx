@@ -12,7 +12,9 @@ const AuthPage = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [authToken, setAuthToken] = useLocalStorage("authToken", "");
 
-    const url = "https://601ab995-8390-45cd-a054-4b77fa95b3f0-00-1fe784zceo76g.sisko.replit.dev";
+    const url = "https://sigma-blog-api.vercel.app";
+        
+    // "https://601ab995-8390-45cd-a054-4b77fa95b3f0-00-1fe784zceo76g.sisko.replit.dev";
 
     const navigate = useNavigate();
     const disableSignup = () => setSignupMode(false);
@@ -36,8 +38,11 @@ const AuthPage = () => {
     const handleRegistraction = async (e) => {
         e.preventDefault();
 
-        if (!handleVerification(password, username))
-            return console.log("Error");
+        if (signupMode){
+            if (!handleVerification(password, username))
+                return console.log("Error");
+        }
+        
 
         try {
             const res = signupMode
