@@ -49,6 +49,16 @@ const AuthPage = () => {
                 ? await axios.post(`${url}/auth/signup`, { username, password})
                 : await axios.post(`${url}/auth/login`, { username, password });
 
+            if (signupMode && res.status === 201) {
+                console.log("Sign up successful! Please log in.");
+                setSignupMode(false); // Switch to login mode
+                return;
+            } else if (signupMode && res.status !== 201) {
+                setUsername("");
+                setPassword("");
+                setConfirmPassword("");
+            }
+            
             if (
                 !signupMode &&
                 res.data &&
